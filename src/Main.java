@@ -1,10 +1,11 @@
+import com.google.gson.Gson;
+
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
-import java.time.Duration;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
@@ -17,13 +18,21 @@ public class Main {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofFile(Path.of(FILE_JSON)))
                 .header("Content-Type", "application/json")
-                .timeout(Duration.ofSeconds(10))
                 .uri(URI.create(url))
                 .build();
 
         var response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenAccept(System.out::println)
+                .thenApply(jsonResponse -> {
+                    Gson gson = new Gson();
+                    DadosApi[] dados = gson.fromJson(jsonResponse,DadosApi[].class);
+                    return dados;
+                })
+                .thenAccept(dados -> {
+                    for (DadosApi dado : dados) {
+                        System.out.println("Número do processo: " + dado.getNumeroProcesso());
+                    }
+                })
                 .join();
 
         }
