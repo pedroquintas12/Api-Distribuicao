@@ -1,7 +1,7 @@
 import java.util.Date;
 import java.util.List;
 
-public class DadosApi {
+public class DadosApi extends RetornoPolo {
 
     private int codProcesso;
     private int codEscritorio;
@@ -18,8 +18,8 @@ public class DadosApi {
     private List<String> assuntos;
     private String magistrado;
     private List<RetornoPolo> autor;
-    private List<RetornoPolo> reu;
-    private List<RetornoPolo> outrosEnvolvidos;
+    private List<RetornoReu> reu;
+    private List<RetornoOutrosEnvil> outrosEnvolvidos;
     private List<RetornoAdvogado> advogados;
     private List<RetornoMovimento> movimentos;
     private List<RetornoDocIniciais> documentosIniciais;
@@ -99,8 +99,8 @@ public class DadosApi {
         this.tipoDoProcesso = tipoDoProcesso;
     }
 
-    public Date getDataAudiencia() {
-        return dataAudiencia;
+    public java.sql.Date getDataAudiencia() {
+        return (java.sql.Date) dataAudiencia;
     }
 
     public void setDataAudiencia(Date dataAudiencia) {
@@ -147,19 +147,19 @@ public class DadosApi {
         this.autor = autor;
     }
 
-    public List<RetornoPolo> getReu() {
+    public List<RetornoReu> getReu() {
         return reu;
     }
 
-    public void setReu(List<RetornoPolo> reu) {
+    public void setReu(List<RetornoReu> reu) {
         this.reu = reu;
     }
 
-    public List<RetornoPolo> getOutrosEnvolvidos() {
+    public List<RetornoOutrosEnvil> getOutrosEnvolvidos() {
         return outrosEnvolvidos;
     }
 
-    public void setOutrosEnvolvidos(List<RetornoPolo> outrosEnvolvidos) {
+    public void setOutrosEnvolvidos(List<RetornoOutrosEnvil> outrosEnvolvidos) {
         this.outrosEnvolvidos = outrosEnvolvidos;
     }
 
