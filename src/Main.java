@@ -39,10 +39,14 @@ import java.util.UUID;
                         return dados;
                     })
                     .thenAccept(dados -> {
-                        InsertApi inserter = new InsertApi();
-
+                         InsertApi inserter = new InsertApi();
                         for (DadosApi dado: dados){
-                               inserter.inserir(dado);
+                            //System.out.println("------------------------------");
+                            //System.out.println("Data da distribuição: " + dado.getDataDistribuicao());
+                            //System.out.println("Data da Audiencia: " + dado.getDataAudiencia());
+
+                              inserter.inserir(dado);
+
                         }
 
                     })

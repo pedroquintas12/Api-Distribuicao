@@ -1,4 +1,4 @@
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public class DadosApi extends RetornoPolo {
@@ -99,8 +99,8 @@ public class DadosApi extends RetornoPolo {
         this.tipoDoProcesso = tipoDoProcesso;
     }
 
-    public java.sql.Date getDataAudiencia() {
-        return (java.sql.Date) dataAudiencia;
+    public Date getDataAudiencia() {
+        return dataAudiencia;
     }
 
     public void setDataAudiencia(Date dataAudiencia) {
