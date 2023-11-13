@@ -1,4 +1,4 @@
-public class RetornoPolo {
+public class RetornoAutor {
 
     private int codPolo;
     private String nome;

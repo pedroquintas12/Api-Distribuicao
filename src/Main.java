@@ -39,15 +39,18 @@ import java.util.UUID;
                         return dados;
                     })
                     .thenAccept(dados -> {
-                         InsertApi inserter = new InsertApi();
+                        InsertApi inserter = new InsertApi();
                         for (DadosApi dado: dados){
-                            //System.out.println("------------------------------");
-                            //System.out.println("Data da distribuição: " + dado.getDataDistribuicao());
-                            //System.out.println("Data da Audiencia: " + dado.getDataAudiencia());
 
-                              inserter.inserir(dado);
+                            inserter.inserir(dado);
 
                         }
+
+                        if (inserter.inseridoComSucesso){
+                            System.out.println("DADOS INSERIDOS COM SUCESSO");
+                        }else {
+                            System.out.println("DADOS JÁ CADASTRADOS");
+                       }
 
                     })
                     .join();

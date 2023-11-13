@@ -1,7 +1,7 @@
 import java.sql.Date;
 import java.util.List;
 
-public class DadosApi extends RetornoPolo {
+public class DadosApi extends RetornoAutor {
 
     private int codProcesso;
     private int codEscritorio;
@@ -17,7 +17,7 @@ public class DadosApi extends RetornoPolo {
     private String valorDaCausa;
     private List<String> assuntos;
     private String magistrado;
-    private List<RetornoPolo> autor;
+    private List<RetornoAutor> autor;
     private List<RetornoReu> reu;
     private List<RetornoOutrosEnvil> outrosEnvolvidos;
     private List<RetornoAdvogado> advogados;
@@ -139,11 +139,11 @@ public class DadosApi extends RetornoPolo {
         this.magistrado = magistrado;
     }
 
-    public List<RetornoPolo> getAutor() {
+    public List<RetornoAutor> getAutor() {
         return autor;
     }
 
-    public void setAutor(List<RetornoPolo> autor) {
+    public void setAutor(List<RetornoAutor> autor) {
         this.autor = autor;
     }
 
