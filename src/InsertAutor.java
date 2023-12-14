@@ -1,49 +1,77 @@
+import com.google.gson.Gson;
+
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.util.UUID;
+import java.util.List;
 
 
 public class InsertAutor {
-    public static boolean inseridoComSucesso;
 
-    public void inserir(DadosApi dadosAutor) {
 
-        Connection connection;
+    public boolean inseridoComSucesso;
+
+    public void inserir(RetornoAutor dados) {
+        UUID codigoLocalizacao = UUID.randomUUID();
+        String codigoLocalizacaoString = codigoLocalizacao.toString();
+        LocalDate dataAtual = LocalDate.now();
+        DadosApi Processo= new DadosApi();
+
         try {
 
-            connection = Conexao.getInstance().getConnection();
+            Connection connection = Conexao.getInstance().getConnection();
 
-            //verifica se os dadosAutor ja existem no banco de dadosAutor
-            String selectSql = "SELECT * FROM apidistribuicao.autor WHERE codPolo = ?";
+            //verifica se os dados ja existem no banco de dados
+            String selectSql = "SELECT * FROM apidistribuicao.processo_autor WHERE codPolo = ?";
             PreparedStatement selectStatement = connection.prepareStatement(selectSql);
-            selectStatement.setInt(1, dadosAutor.getCodPolo());
+            selectStatement.setInt(1, dados.getCodPolo());
             ResultSet resultSet = selectStatement.executeQuery();
 
-            if (resultSet.next()) {
-            } else {
-                //insere o dado no banco, caso ele não exista
-                String sql = "INSERT INTO apidistribuicao.autor(codPolo, " +
-                        "nome, descricaoTipoPolo, cnpj, cpf)" +
-                        " VALUES (?,?,?,?,?)";
+            String selectID = "SELECT ID_processo FROM apidistribuicao.processo WHERE codProcesso = ?";
+            PreparedStatement selectIDStatement = connection.prepareStatement(selectID);
+            selectIDStatement.setInt(1, Processo.getCodProcesso());
+            ResultSet resultSetID = selectIDStatement.executeQuery();
 
-                PreparedStatement statement = connection.prepareStatement(sql);
+            int idProcesso = 0;
 
-                statement.setInt(1,dadosAutor.getCodPolo());
-                statement.setString(2,dadosAutor.getNome());
-                statement.setString(3,dadosAutor.getDescricaoTipoPolo());
-                statement.setString(4,dadosAutor.getCnpj());
-                statement.setString(5,dadosAutor.getCpf());
+            if (resultSetID.next()) {
+                idProcesso = resultSetID.getInt(1);
 
 
-                statement.execute();
+                // Insere os dados na tabela processo_autor usando o ID do processo
+                String sqlProcessoAutor = "INSERT INTO apidistribuicao.processo_autor(ID_processo, codPolo, nome, descricaoTipoPolo, cnpj, cpf) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)";
+
+                PreparedStatement statementProcessoAutor = connection.prepareStatement(sqlProcessoAutor);
+
+                // Configura os parâmetros para a tabela processo_autor
+                statementProcessoAutor.setInt(1, idProcesso); // Use o ID do processo
+                statementProcessoAutor.setInt(2, dados.getCodPolo());
+                statementProcessoAutor.setString(3, dados.getNome());
+                statementProcessoAutor.setString(4, dados.getDescricaoTipoPolo());
+                statementProcessoAutor.setString(5, dados.getCnpj());
+                statementProcessoAutor.setString(6, dados.getCpf());
+
+                // Execute a inserção na tabela processo_autor
+                statementProcessoAutor.execute();
+
+                // Define que a inserção foi bem-sucedida
                 inseridoComSucesso = true;
+
+                // Fecha os recursos relacionados à inserção na tabela processo_autor
+                statementProcessoAutor.close();
 
             }
 
+
             connection.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+
     }
-    }
-    }
+}
 

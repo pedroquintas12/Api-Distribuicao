@@ -9,10 +9,9 @@ import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
-import java.util.UUID;
 
 
-    public class Main {
+public class Main {
         public static void main(String[] args) throws FileNotFoundException {
 
 
@@ -34,20 +33,27 @@ import java.util.UUID;
                         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
                         Gson gson = new GsonBuilder()
                                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                                .create();
+                                    .create();
                         DadosApi[] dados = gson.fromJson(jsonResponse, DadosApi[].class);
+                        RetornoAutor[] dadosAutor = gson.fromJson(jsonResponse, RetornoAutor[].class);
                         return dados;
                     })
                     .thenAccept(dados -> {
+
                         InsertApi inserter = new InsertApi();
+                        InsertAutor insertAutor = new InsertAutor();
                         for (DadosApi dado: dados){
 
                             inserter.inserir(dado);
 
                         }
+                        for (RetornoAutor autor : dados) {
+                            insertAutor.inserir(autor);
+                        }
 
-                        if (inserter.inseridoComSucesso){
-                            System.out.println("DADOS INSERIDOS COM SUCESSO");
+
+                       if (inserter.inseridoComSucesso){
+                           System.out.println("DADOS INSERIDOS COM SUCESSO");
                         }else {
                             System.out.println("DADOS JÁ CADASTRADOS");
                        }

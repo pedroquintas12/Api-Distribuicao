@@ -1,7 +1,7 @@
 import java.sql.Date;
 import java.util.List;
 
-public class DadosApi extends RetornoAutor {
+public class DadosApi {
 
     private int codProcesso;
     private int codEscritorio;

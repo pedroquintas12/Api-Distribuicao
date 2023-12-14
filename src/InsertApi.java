@@ -19,10 +19,11 @@ public class InsertApi {
         String codigoLocalizacaoString = codigoLocalizacao.toString();
         LocalDate dataAtual = LocalDate.now();
 
+        Connection connection = null;
 
         try {
 
-            Connection connection = Conexao.getInstance().getConnection();
+            connection = Conexao.getInstance().getConnection();
 
             //verifica se os dados ja existem no banco de dados
             String selectSql = "SELECT * FROM apidistribuicao.processo WHERE codProcesso = ?";
@@ -38,47 +39,56 @@ public class InsertApi {
                         "dataDistribuicao, valorDaCausa, assuntos, magistrado, cidade, uf, nomePesquisado, data_insercao, LocatorDB) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
-                PreparedStatement statement = connection.prepareStatement(sql);
+                PreparedStatement statementProcesso = connection.prepareStatement(sql);
 
-                statement.setInt(1, dados.getCodProcesso());
-                statement.setInt(2, dados.getCodEscritorio());
-                statement.setString(3, dados.getNumeroProcesso());
-                statement.setInt(4, dados.getInstancia());
-                statement.setString(5, dados.getTribunal());
-                statement.setString(6, dados.getSiglaSistema());
-                statement.setString(7, dados.getComarca());
-                statement.setString(8, dados.getOrgaoJulgador());
-                statement.setString(9, dados.getTipoDoProcesso());
+                statementProcesso.setInt(1, dados.getCodProcesso());
+                statementProcesso.setInt(2, dados.getCodEscritorio());
+                statementProcesso.setString(3, dados.getNumeroProcesso());
+                statementProcesso.setInt(4, dados.getInstancia());
+                statementProcesso.setString(5, dados.getTribunal());
+                statementProcesso.setString(6, dados.getSiglaSistema());
+                statementProcesso.setString(7, dados.getComarca());
+                statementProcesso.setString(8, dados.getOrgaoJulgador());
+                statementProcesso.setString(9, dados.getTipoDoProcesso());
                 if (dados.getDataAudiencia() != null) {
-                    statement.setDate(10, new java.sql.Date(dados.getDataAudiencia().getTime()));
+                    statementProcesso.setDate(10, new java.sql.Date(dados.getDataAudiencia().getTime()));
                 } else {
-                    statement.setNull(10, 0);
+                    statementProcesso.setNull(10, 0);
                 }
-                statement.setDate(11, new Date(dados.getDataDistribuicao().getTime()));
-                statement.setString(12, dados.getValorDaCausa());
+                statementProcesso.setDate(11, new Date(dados.getDataDistribuicao().getTime()));
+                statementProcesso.setString(12, dados.getValorDaCausa());
                 // Converter a lista de assuntos em uma string JSON e retira os caracteres "[" e ""
                 List<String> assuntos = dados.getAssuntos();
                 String assuntosJson = new Gson().toJson(assuntos).replaceAll("[\\[\\]\"]", "");
-                statement.setString(13,assuntosJson);
-                statement.setString(14, dados.getMagistrado());
-                statement.setString(15, dados.getCidade());
-                statement.setString(16, dados.getUf());
-                statement.setString(17, dados.getNomePesquisado());
-                statement.setDate(18, Date.valueOf(dataAtual));
-                statement.setString(19, codigoLocalizacaoString);
+                statementProcesso.setString(13, assuntosJson);
+                statementProcesso.setString(14, dados.getMagistrado());
+                statementProcesso.setString(15, dados.getCidade());
+                statementProcesso.setString(16, dados.getUf());
+                statementProcesso.setString(17, dados.getNomePesquisado());
+                statementProcesso.setDate(18, Date.valueOf(dataAtual));
+                statementProcesso.setString(19, codigoLocalizacaoString);
 
-                statement.execute();
 
-                inseridoComSucesso = true;
-
+                statementProcesso.executeUpdate();
             }
+                resultSet.close();
+                selectStatement.close();
 
+                connection.close();
+            } catch(Exception e){
+                e.printStackTrace();
+            } finally{
+                // Fecha a conexão no bloco finally para garantir que ela seja fechada, mesmo em caso de exceção
+                try {
+                    if (connection != null) {
+                        connection.close();
+                    }
 
-            connection.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
-
     }
-}
+
 
