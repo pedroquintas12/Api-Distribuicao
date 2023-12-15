@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,22 +12,44 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.util.UUID;
 
+<<<<<<< Updated upstream
 
     public class Main {
         public static void main(String[] args) throws FileNotFoundException {
+=======
+public class Main {
+    public static void main(String[] args) throws FileNotFoundException {
+        String FILE_JSON = "C:\\Users\\pedro\\IdeaProjects\\Api Distribuicao\\src\\BODY.JSON";
+        String url = "http://online.solucionarelj.com.br:9090/WebApiDistribuicoesV2/api/distribuicoes/BuscaNovasDistribuicoes";
+        var client = HttpClient.newHttpClient();
+>>>>>>> Stashed changes
 
+        // Faz o request para a API
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofFile(Path.of(FILE_JSON)))
+                .header("Content-Type", "application/json")
+                .uri(URI.create(url))
+                .build();
 
-            String FILE_JSON = "C:\\Users\\pedro\\IdeaProjects\\Api Distribuicao\\src\\BODY.JSON";
-            String url = "http://online.solucionarelj.com.br:9090/WebApiDistribuicoesV2/api/distribuicoes/BuscaNovasDistribuicoes";
-            var client = HttpClient.newHttpClient();
+        var response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenApply(jsonResponse -> {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    Gson gson = new GsonBuilder()
+                            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                            .create();
+                    DadosApi[] dados = gson.fromJson(jsonResponse, DadosApi[].class);
+                    return dados;
+                })
+                .thenAccept(dados -> {
+                    InsertApi inserter = new InsertApi();
 
-            //faz o request para a API
-            HttpRequest request = HttpRequest.newBuilder()
-                    .POST(HttpRequest.BodyPublishers.ofFile(Path.of(FILE_JSON)))
-                    .header("Content-Type", "application/json")
-                    .uri(URI.create(url))
-                    .build();
+                    for (DadosApi dado : dados) {
+                        inserter.inserir(dado);
+                    }
 
+<<<<<<< Updated upstream
             var response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(HttpResponse::body)
                     .thenApply(jsonResponse -> {
@@ -57,3 +80,14 @@ import java.util.UUID;
 
             }
         }
+=======
+                    if (inserter.inseridoComSucesso) {
+                        System.out.println("DADOS INSERIDOS COM SUCESSO");
+                    } else {
+                        System.out.println("DADOS JÁ CADASTRADOS");
+                    }
+                })
+                .join();
+    }
+}
+>>>>>>> Stashed changes
