@@ -10,19 +10,12 @@ import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
-import java.util.UUID;
 
-<<<<<<< Updated upstream
-
-    public class Main {
-        public static void main(String[] args) throws FileNotFoundException {
-=======
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         String FILE_JSON = "C:\\Users\\pedro\\IdeaProjects\\Api Distribuicao\\src\\BODY.JSON";
         String url = "http://online.solucionarelj.com.br:9090/WebApiDistribuicoesV2/api/distribuicoes/BuscaNovasDistribuicoes";
         var client = HttpClient.newHttpClient();
->>>>>>> Stashed changes
 
         // Faz o request para a API
         HttpRequest request = HttpRequest.newBuilder()
@@ -49,38 +42,6 @@ public class Main {
                         inserter.inserir(dado);
                     }
 
-<<<<<<< Updated upstream
-            var response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenApply(jsonResponse -> {
-                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        Gson gson = new GsonBuilder()
-                                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                                .create();
-                        DadosApi[] dados = gson.fromJson(jsonResponse, DadosApi[].class);
-                        return dados;
-                    })
-                    .thenAccept(dados -> {
-                        InsertApi inserter = new InsertApi();
-                        for (DadosApi dado: dados){
-
-                            inserter.inserir(dado);
-
-                        }
-
-                        if (inserter.inseridoComSucesso){
-                            System.out.println("DADOS INSERIDOS COM SUCESSO");
-                        }else {
-                            System.out.println("DADOS JÁ CADASTRADOS");
-                       }
-
-                    })
-                    .join();
-
-            }
-        }
-=======
                     if (inserter.inseridoComSucesso) {
                         System.out.println("DADOS INSERIDOS COM SUCESSO");
                     } else {
@@ -90,4 +51,3 @@ public class Main {
                 .join();
     }
 }
->>>>>>> Stashed changes
