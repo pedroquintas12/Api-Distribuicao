@@ -1,0 +1,4 @@
+jan. 24, 2024 8:15:44 AM Main lambda$executarCodigo$1
+INFO: DADOS JÁ CADASTRADOS
+jan. 24, 2024 9:15:04 AM Main lambda$executarCodigo$1
+INFO: DADOS JÁ CADASTRADOS

@@ -57,7 +57,7 @@ public class InsertApi {
                             statementProcesso.setString(15, dados.getCidade());
                             statementProcesso.setString(16, dados.getUf());
                             statementProcesso.setString(17, dados.getNomePesquisado());
-                            statementProcesso.setDate(18, Date.valueOf(dataAtual));
+                            statementProcesso.setTimestamp(18, new Timestamp(System.currentTimeMillis()));
                             statementProcesso.setString(19, codigoLocalizacaoString);
 
                             statementProcesso.executeUpdate();
