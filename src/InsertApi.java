@@ -2,6 +2,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -47,7 +49,20 @@ public class InsertApi {
                             } else {
                                 statementProcesso.setNull(10, 0);
                             }
-                            statementProcesso.setDate(11, new Date(dados.getDataDistribuicao().getTime()));
+                            if (dados.getDataDistribuicao() != null) {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                String dataDistribuicaoFormatted = dateFormat.format(dados.getDataDistribuicao());
+
+                                try {
+                                    java.util.Date parsedDate = dateFormat.parse(dataDistribuicaoFormatted);
+                                    statementProcesso.setDate(11, new java.sql.Date(parsedDate.getTime()));
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                statementProcesso.setNull(11, 0);
+                            }
+
                             statementProcesso.setString(12, dados.getValorDaCausa());
                             // Converter a lista de assuntos em uma string JSON e retira os caracteres "[" e ""
                             List<String> assuntos = dados.getAssuntos();
