@@ -1,5 +1,4 @@
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.sql.*;
 import java.text.ParseException;
@@ -87,8 +86,9 @@ public class InsertApi {
                                     inserirReus(connection, idProcesso, dados.getReu());
                                     inserirAdv(connection, idProcesso, dados.getAdvogados());
                                     inserirOutrosEnvil(connection, idProcesso, dados.getOutrosEnvolvidos());
-                                    inserirMovimentos(connection,idProcesso,dados.getMovimentos());
-                                    inserirLink(connection,idProcesso,dados.getDocumentosIniciais());
+                                    inserirMovimentos(connection, idProcesso, dados.getMovimentos());
+                                    inserirLink(connection, idProcesso, dados.getDocumentosIniciais());
+                                    inserirDocInicial(connection, idProcesso,dados.getListaDocumentos());
 
                                 }
                             }
@@ -186,13 +186,14 @@ public class InsertApi {
             }
         }
     }
-    private void inserirMovimentos(Connection conn, int idProcesso, List<RetornoMovimento> Movimentos) throws SQLException{
-        if(Movimentos != null && !Movimentos.isEmpty()){
+
+    private void inserirMovimentos(Connection conn, int idProcesso, List<RetornoMovimento> Movimentos) throws SQLException {
+        if (Movimentos != null && !Movimentos.isEmpty()) {
             String sql = "INSERT INTO apidistribuicao.processo_movimento (ID_processo, texto,data) VALUES (?,?,?)";
-            try (PreparedStatement statementMovimentos = conn.prepareStatement(sql)){
-                for (RetornoMovimento movimento : Movimentos){
-                    statementMovimentos.setInt(1,idProcesso);
-                    statementMovimentos.setString(2,movimento.getTexto());
+            try (PreparedStatement statementMovimentos = conn.prepareStatement(sql)) {
+                for (RetornoMovimento movimento : Movimentos) {
+                    statementMovimentos.setInt(1, idProcesso);
+                    statementMovimentos.setString(2, movimento.getTexto());
                     if (movimento.getData() != null) {
                         statementMovimentos.setDate(3, new java.sql.Date(movimento.getData().getTime()));
                     } else {
@@ -204,19 +205,37 @@ public class InsertApi {
             }
         }
     }
-    private void inserirLink (Connection conn, int idProcesso, List<RetornoDocIniciais> Link)throws SQLException{
-        if (Link != null && !Link.isEmpty()){
+
+    private void inserirLink(Connection conn, int idProcesso, List<RetornoDocIniciais> Link) throws SQLException {
+        if (Link != null && !Link.isEmpty()) {
             String sql = "INSERT INTO apidistribuicao.processo_link (ID_processo, link) VALUES (?,?)";
-            try (PreparedStatement statementLink = conn.prepareStatement(sql)){
-                for (RetornoDocIniciais link : Link){
-                    statementLink.setInt(1,idProcesso);
-                    statementLink.setString(2,link.getLinkDocInicial());
+            try (PreparedStatement statementLink = conn.prepareStatement(sql)) {
+                for (RetornoDocIniciais link : Link) {
+                    statementLink.setInt(1, idProcesso);
+                    statementLink.setString(2, link.getLinkDocInicial());
 
                     statementLink.executeUpdate();
-                    inseridoComSucesso = true;
+
                 }
             }
 
+        }
+    }
+
+    private void inserirDocInicial(Connection conn, int idProcesso, List<RetornoListDocument> docInicial) throws SQLException {
+        if (docInicial != null && !docInicial.isEmpty()) {
+            String sql = "INSERT INTO apidistribuicao.processo_docinicial (ID_processo, linkDocumento, docPeticaoInicial) VALUES (?, ?, ?)";
+            try (PreparedStatement statementDocInicial = conn.prepareStatement(sql)) {
+                for (RetornoListDocument DocInicial : docInicial) {
+                        statementDocInicial.setInt(1, idProcesso);
+                        statementDocInicial.setString(2, DocInicial.getLinkDocumento());
+                        statementDocInicial.setBoolean(3, DocInicial.isDocPeticaoInicial());
+
+                        statementDocInicial.executeUpdate();
+                        inseridoComSucesso = true;
+
+                }
+            }
         }
     }
 }

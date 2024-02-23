@@ -23,6 +23,7 @@ public class DadosApi extends RetornoAutor {
     private List<RetornoAdvogado> advogados;
     private List<RetornoMovimento> movimentos;
     private List<RetornoDocIniciais> documentosIniciais;
+    private List<RetornoListDocument> listaDocumentos; // Corrigido o nome da classe aqui
     private String cidade;
     private String uf;
     private String nomePesquisado;
@@ -185,6 +186,14 @@ public class DadosApi extends RetornoAutor {
 
     public void setDocumentosIniciais(List<RetornoDocIniciais> documentosIniciais) {
         this.documentosIniciais = documentosIniciais;
+    }
+
+    public List<RetornoListDocument> getListaDocumentos() {
+        return listaDocumentos;
+    }
+
+    public void setListaDocumentos(List<RetornoListDocument> listaDocumentos) {
+        this.listaDocumentos = listaDocumentos;
     }
 
     public String getCidade() {
