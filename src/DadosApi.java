@@ -23,7 +23,7 @@ public class DadosApi extends RetornoAutor {
     private List<RetornoAdvogado> advogados;
     private List<RetornoMovimento> movimentos;
     private List<RetornoDocIniciais> documentosIniciais;
-    private List<RetornoListDocument> listaDocumentos; // Corrigido o nome da classe aqui
+    private List<RetornoListDocument> listaDocumentos;
     private String cidade;
     private String uf;
     private String nomePesquisado;
