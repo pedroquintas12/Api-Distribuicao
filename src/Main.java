@@ -12,10 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -88,19 +85,64 @@ public class Main {
 
                         if (inserter.inseridoComSucesso) {
                             logger.log(Level.INFO, "DADOS INSERIDOS COM SUCESSO");
+
+                            // Confirmar os dados para a outra API
+                            confirmarDados(dados);
                         } else {
                             logger.log(Level.INFO, "DADOS JÁ CADASTRADOS");
                         }
                     })
                     .exceptionally(ex -> {
-                        logger.log(Level.SEVERE, "ERRO:\n " + ex);
-                        return null; // Suprimir a exceção para permitir que o Timer continue
+                        if (ex.getCause() instanceof RuntimeException) {
+                            RuntimeException runtimeException = (RuntimeException) ex.getCause();
+                            logger.log(Level.SEVERE, runtimeException.getMessage());
+                        } else {
+                            logger.log(Level.SEVERE, "API vazia ou com erro de request", ex);
+                        }
+                        return null;
                     })
                     .join();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erro ao executar o código", e);
         }
     }
+
+    private static void confirmarDados(DadosApi[] dados) {
+        try {
+            String nomeRelacional = "Nome";
+            String token = "Token";
+
+            // Construir a lista de distribuições
+            List<Confirmardados> distribuicoes = new ArrayList<>();
+            for (DadosApi dado : dados) {
+                distribuicoes.add(new Confirmardados(dado.getCodEscritorio(), dado.getCodProcesso()));
+            }
+
+            // Construindo o JSON para enviar na requisição
+            String requestBody = "{\"nomeRelacional\":\"" + nomeRelacional + "\",\"token\":\"" + token + "\",\"distribuicoes\":[";
+            for (Confirmardados dist : distribuicoes) {
+                requestBody += "{\"codEscritorio\":" + dist.getCodEscritorio() + ",\"codProcesso\":" + dist.getCodProcesso() + "},";
+            }
+            requestBody = requestBody.substring(0, requestBody.length() - 1); // Remove a vírgula extra
+            requestBody += "]}";
+
+            String urlConfirmacao = "http://online.solucionarelj.com.br:9090/WebApiDistribuicoesV2/api/distribuicoes/ConfirmaRecebimentoDistribuicoes";
+            // Configurando e enviando a requisição POST
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(urlConfirmacao ))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Status Code: " + response.statusCode());
+            System.out.println("Response Body: " + response.body());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Erro ao confirmar os dados", e);
+        }
+    }
+
 
     private static String obterHoraAtualFormatada() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

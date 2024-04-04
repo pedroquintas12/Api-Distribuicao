@@ -24,7 +24,7 @@ public class InsertApi {
             // Verifica se os dados já existem no banco de dados
             String selectSql = "SELECT * FROM apidistribuicao.processo WHERE codProcesso = ?";
             try (PreparedStatement selectStatement = connection.prepareStatement(selectSql)) {
-                selectStatement.setInt(1, dados.getCodProcesso());
+                selectStatement.setInt(1, dados.getCodProcesso()); // verifica pelo codigo do processo
                 try (ResultSet resultSet = selectStatement.executeQuery()) {
                     if (!resultSet.next()) {
                         // Insere o dado no banco, caso ele não exista
