@@ -115,8 +115,8 @@ public class Main {
 
     private static void confirmarDados(DadosApi[] dados) {
         try {
-            String nomeRelacional = "LIGCONTATOS";
-            String token = "19887e90a9088f5d59b1008a48ad9752";
+            String nomeRelacional = "nome";
+            String token = "TOKEN";
 
 
             List<Confirmardados> distribuicoes = new ArrayList<>();
