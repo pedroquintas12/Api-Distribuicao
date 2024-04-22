@@ -66,31 +66,36 @@ public class Main {
                     .build();
 
             var response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenApply(jsonResponse -> {
-                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        Gson gson = new GsonBuilder()
-                                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                                .create();
-                        DadosApi[] dados = gson.fromJson(jsonResponse, DadosApi[].class);
-                        return dados;
+                    .thenApply(HttpResponse -> {
+                      int statusCode = HttpResponse.statusCode();
+                      if(statusCode!=200){
+                          logger.log(Level.WARNING, "Resposta da API: " + HttpResponse.body() + " Status: "+ HttpResponse.statusCode());
+                          return null;
+                      }else {
+                          DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                          dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                          Gson gson = new GsonBuilder()
+                                  .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                                  .create();
+                          String jsonResponse = HttpResponse.body();
+                          DadosApi[] dados = gson.fromJson(jsonResponse, DadosApi[].class);
+                          return dados;
+                      }
                     })
                     .thenAccept(dados -> {
-                        InsertApi inserter = new InsertApi();
+                        if (dados != null) {
+                            InsertApi inserter = new InsertApi();
 
-                        for (DadosApi dado : dados) {
-                            inserter.inserir(dado);
-                        }
+                            for (DadosApi dado : dados) {
+                                inserter.inserir(dado);
+                            }
 
-                        if (inserter.inseridoComSucesso) {
-                            logger.log(Level.INFO, "DADOS INSERIDOS COM SUCESSO");
+                            if (inserter.inseridoComSucesso) {
+                                logger.log(Level.INFO, "DADOS INSERIDOS COM SUCESSO");
+                                confirmarDados(dados);
+                            }
+                            }
 
-                            // Confirmar os dados para a outra API
-                            confirmarDados(dados);
-                        } else {
-                            logger.log(Level.INFO, "DADOS JÁ CADASTRADOS");
-                        }
                     })
                     .exceptionally(ex -> {
                         if (ex.getCause() instanceof RuntimeException) {
@@ -107,18 +112,19 @@ public class Main {
         }
     }
 
+
     private static void confirmarDados(DadosApi[] dados) {
         try {
-            String nomeRelacional = "Nome";
-            String token = "Token";
+            String nomeRelacional = "LIGCONTATOS";
+            String token = "19887e90a9088f5d59b1008a48ad9752";
 
-            // Construir a lista de distribuições
+
             List<Confirmardados> distribuicoes = new ArrayList<>();
             for (DadosApi dado : dados) {
                 distribuicoes.add(new Confirmardados(dado.getCodEscritorio(), dado.getCodProcesso()));
             }
 
-            // Construindo o JSON para enviar na requisição
+            // JSON para enviar na requisição
             String requestBody = "{\"nomeRelacional\":\"" + nomeRelacional + "\",\"token\":\"" + token + "\",\"distribuicoes\":[";
             for (Confirmardados dist : distribuicoes) {
                 requestBody += "{\"codEscritorio\":" + dist.getCodEscritorio() + ",\"codProcesso\":" + dist.getCodProcesso() + "},";
