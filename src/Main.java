@@ -25,7 +25,6 @@ public class Main {
     public static void main(String[] args) {
 
 
-        // Configuração do logging para escrever em um arquivo
         try {
             String logDirectory = "C:\\Users\\pedro\\OneDrive - LIG CONTATO DIÁRIO FORENSE\\DISTRIBUIÇÃO\\LOG DISTRIBUICÃO\\";
 
@@ -36,7 +35,6 @@ public class Main {
 
             String currentLogDate = dataparalog();
             if (!currentLogDate.equals(lastLogDate)) {
-                // Se o dia mudou, cria um novo arquivo de log
                 lastLogDate = currentLogDate;
                 FileHandler fileHandler = new FileHandler(logDirectory + "log " + currentLogDate + ".txt");
                 fileHandler.setFormatter(new SimpleFormatter());
@@ -45,7 +43,6 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Cria uma instância do Timer
         Timer timer = new Timer();
 
         // Agenda a execução do código para ser repetida a cada 60 minutos
@@ -129,11 +126,10 @@ public class Main {
             for (Confirmardados dist : distribuicoes) {
                 requestBody += "{\"codEscritorio\":" + dist.getCodEscritorio() + ",\"codProcesso\":" + dist.getCodProcesso() + "},";
             }
-            requestBody = requestBody.substring(0, requestBody.length() - 1); // Remove a vírgula extra
+            requestBody = requestBody.substring(0, requestBody.length() - 1);
             requestBody += "]}";
 
             String urlConfirmacao = "http://online.solucionarelj.com.br:9090/WebApiDistribuicoesV2/api/distribuicoes/ConfirmaRecebimentoDistribuicoes";
-            // Configurando e enviando a requisição POST
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(urlConfirmacao ))
