@@ -130,10 +130,10 @@ public class Main {
 
     private static void confirmarDados(DadosApi[] dados) {
         try {
-            PreparedStatement stmt = conn.prepareStatement("SELECT solucionari_distribuicao_confirmardados_url FROM companies");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM companies");
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                String urlConfirmados = rs.getString("solucionari_distribuicao_confirmardados_url");
+                String urlConfirmados = rs.getString("solucionare_distribuicao_confirmardados_url");
                 String nomeRelacional = rs.getString("solucionare_distribuicao_nome_relacional");
                 String token = rs.getString("solucionare_distribuicao_token");
 
@@ -159,11 +159,9 @@ public class Main {
 
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 logger.log(Level.SEVERE,"Status Code: " + response.statusCode()+"\n"+"Response Body: " + response.body());
-            } else {
-                logger.log(Level.WARNING, "Nenhuma URL de confirmação encontrada na base de dados.");
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erro ao confirmar os dados", e);
+            logger.log(Level.SEVERE, "Erro ao confirmar os dados", e.getMessage());
         }
     }
 
